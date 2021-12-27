@@ -67,4 +67,4 @@ class SNOOSmartBassinetFlowHandler(config_entries.ConfigFlow, domain=DOMAIN):
                 }
             )
 
-        return self.async_show_form(step_id="init", data_scheme=_get_data_scheme(), errors=self._errors)
+        return self.async_show_form(step_id="user", data_scheme=_get_data_scheme(), errors=self._errors)
