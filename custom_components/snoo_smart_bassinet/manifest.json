@@ -1,0 +1,16 @@
+{
+  "domain": "snoo_smart_bassinet",
+  "name": "Happiest Baby SNOO Smart Bassinet",
+  "documentation": "https://github.com/swar/homeassistant-snoo-smart-bassinet",
+  "issue_tracker": "https://github.com/moralmunky/Home-Assistant-Mail-And-Packages/issues",
+  "dependencies": [],
+  "codeowners": [
+    "@swar"
+  ],
+  "config_flow": true,
+  "requirements": [
+    "pysnoo>=0.1.2"
+  ],
+  "iot_class": "cloud_polling",
+  "version": "0.0.0-dev"
+}
