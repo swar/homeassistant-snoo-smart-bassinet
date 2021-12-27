@@ -1,0 +1,16 @@
+{
+  "title": "Happiest Baby SNOO Smart Bassinet",
+  "config": {
+    "step": {
+      "user": {
+        "data": {
+          "username": "Username",
+          "password": "Password",
+          "token": "Token"
+        },
+        "description": "You must enter the username and password. The token is optional if you already have one generated.",
+        "title": "SNOO Smart Bassinet - Configuration"
+      }
+    }
+  }
+}
