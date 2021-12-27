@@ -47,7 +47,7 @@ class SNOOSmartBassinetFlowHandler(config_entries.ConfigFlow, domain=DOMAIN):
             if CONF_TOKEN in user_input and len(user_input[CONF_TOKEN]) > 0:
                 token = user_input[CONF_TOKEN]
             else:
-                token = await _get_token(user_input)
+                token = await self.async_add_executor_job( _get_token, user_input)
             if token and len(self._errors) == 0:
                 user_input[CONF_TOKEN] = token
                 return self.async_create_entry(title=TITLE, data=user_input)
