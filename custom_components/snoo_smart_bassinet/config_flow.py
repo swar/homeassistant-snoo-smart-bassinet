@@ -13,6 +13,7 @@ from homeassistant.const import (
     CONF_USERNAME,
     CONF_TOKEN,
 )
+from oauthlib.oauth2.rfc6749.errors import CustomOAuth2Error
 from pysnoo import SnooAuthSession
 
 
@@ -20,8 +21,11 @@ _LOGGER = logging.getLogger(__name__)
 
 
 async def _get_token(user_input):
-    async with SnooAuthSession() as auth:
-        token = await auth.fetch_token(user_input[CONF_USERNAME], user_input[CONF_PASSWORD])
+    try:
+        async with SnooAuthSession() as auth:
+            token = await auth.fetch_token(user_input[CONF_USERNAME], user_input[CONF_PASSWORD])
+    except CustomOAuth2Error:
+        token = None
     return token
 
 
@@ -40,14 +44,16 @@ class SNOOSmartBassinetFlowHandler(config_entries.ConfigFlow, domain=DOMAIN):
         """Handle a flow initialized by the user."""
         if user_input is not None:
             self._data = user_input
-            if CONF_TOKEN not in user_input:
-                token = await _get_token(user_input)
-            else:
+            if CONF_TOKEN in user_input and len(user_input[CONF_TOKEN]) > 0:
                 token = user_input[CONF_TOKEN]
+            else:
+                token = await _get_token(user_input)
             if token and len(self._errors) == 0:
                 user_input[CONF_TOKEN] = token
                 return self.async_create_entry(title=TITLE, data=user_input)
-            # TODO: Add error handling
+            else:
+                self._errors['base'] = "failed_auth"
+                return await self._show_config_form(user_input)
 
         self._errors = {}
         if not user_input:
@@ -57,7 +63,7 @@ class SNOOSmartBassinetFlowHandler(config_entries.ConfigFlow, domain=DOMAIN):
     async def _show_config_form(self, user_input):
         """Show the configuration form to edit configuration data."""
 
-        def _get_default(key, fallback_default=None) -> None:
+        def _get_default(key, fallback_default="") -> None:
             """Gets default value for key."""
             return user_input.get(key, fallback_default)
 

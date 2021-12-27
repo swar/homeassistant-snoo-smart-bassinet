@@ -11,6 +11,9 @@
         "description": "You must enter the username and password. The token is optional if you already have one generated.",
         "title": "SNOO Smart Bassinet - Configuration"
       }
+    },
+    "error": {
+      "failed_auth": "Failed to validate username and password."
     }
   }
 }
