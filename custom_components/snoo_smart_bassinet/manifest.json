@@ -9,6 +9,7 @@
   ],
   "config_flow": true,
   "requirements": [
+    "asyncio",
     "pysnoo>=0.1.2"
   ],
   "iot_class": "cloud_polling",
