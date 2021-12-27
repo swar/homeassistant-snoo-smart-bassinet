@@ -58,10 +58,13 @@ class SNOOSmartBassinetFlowHandler(config_entries.ConfigFlow, domain=DOMAIN):
             """Gets default value for key."""
             return user_input.get(key, self._data.get(key, fallback_default))
 
-        return vol.Schema(
-            {
-                vol.Required(CONF_USERNAME, default=_get_default(CONF_USERNAME)): str,
-                vol.Required(CONF_PASSWORD, default=_get_default(CONF_PASSWORD)): str,
-                vol.Optional(CONF_TOKEN, default=_get_default(CONF_TOKEN)): str,
-            }
-        )
+        def _get_data_scheme():
+            return vol.Schema(
+                {
+                    vol.Required(CONF_USERNAME, default=_get_default(CONF_USERNAME)): str,
+                    vol.Required(CONF_PASSWORD, default=_get_default(CONF_PASSWORD)): str,
+                    vol.Optional(CONF_TOKEN, default=_get_default(CONF_TOKEN)): str,
+                }
+            )
+
+        return self.async_show_form(step_id="init", data_scheme=_get_data_scheme(), errors=self._errors)
