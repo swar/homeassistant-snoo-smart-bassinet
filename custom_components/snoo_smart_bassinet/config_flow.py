@@ -3,7 +3,7 @@
 import logging
 import voluptuous as vol
 
-from const import (
+from .const import (
     DOMAIN,
     TITLE,
 )
@@ -19,7 +19,7 @@ from pysnoo import SnooAuthSession
 _LOGGER = logging.getLogger(__name__)
 
 
-def _get_token(user_input):
+async def _get_token(user_input):
     async with SnooAuthSession() as auth:
         token = await auth.fetch_token(user_input[CONF_USERNAME], user_input[CONF_PASSWORD])
     return token
@@ -39,6 +39,7 @@ class SNOOSmartBassinetFlowHandler(config_entries.ConfigFlow, domain=DOMAIN):
     async def async_step_user(self, user_input=None):
         """Handle a flow initialized by the user."""
         if user_input is not None:
+            self._data = user_input
             if CONF_TOKEN not in user_input:
                 token = await _get_token(user_input)
             else:
@@ -49,6 +50,8 @@ class SNOOSmartBassinetFlowHandler(config_entries.ConfigFlow, domain=DOMAIN):
             # TODO: Add error handling
 
         self._errors = {}
+        if not user_input:
+            user_input = {}
         return await self._show_config_form(user_input)
 
     async def _show_config_form(self, user_input):
@@ -56,9 +59,9 @@ class SNOOSmartBassinetFlowHandler(config_entries.ConfigFlow, domain=DOMAIN):
 
         def _get_default(key, fallback_default=None) -> None:
             """Gets default value for key."""
-            return user_input.get(key, self._data.get(key, fallback_default))
+            return user_input.get(key, fallback_default)
 
-        def _get_data_scheme():
+        def _get_data_schema():
             return vol.Schema(
                 {
                     vol.Required(CONF_USERNAME, default=_get_default(CONF_USERNAME)): str,
@@ -67,4 +70,4 @@ class SNOOSmartBassinetFlowHandler(config_entries.ConfigFlow, domain=DOMAIN):
                 }
             )
 
-        return self.async_show_form(step_id="user", data_scheme=_get_data_scheme(), errors=self._errors)
+        return self.async_show_form(step_id="user", data_schema=_get_data_schema(), errors=self._errors)
